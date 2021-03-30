@@ -1,0 +1,71 @@
+<html>
+  <head>
+    <title>Fourier 2D</title>
+    <script src="fourier.js"></script>
+  </head>
+  <body>
+    <script>
+      var canvas = createCanvas(500,500);
+
+      var arr_astroid = generatePoints(50);
+      
+      var drawing = false;
+      var finish = false;
+      var arr = [];
+      //arr = arr_astroid;
+
+      
+      function onMouseClick(evt){
+	  if(!finish & !drawing){
+	      drawing = true;
+	  }
+	  else if(drawing){
+	      finish = true;
+	      drawing = false;
+	      s = "";
+	      for(var i = 0;i<arr.length;i++){
+		  s += arr[i].real + " " + arr[i].img + "\n";
+	      }
+	      console.log(s);
+	  }
+      }
+      
+      function onMouseMove(evt){
+	  if (drawing){
+	      var x = evt.clientX;
+	      var y = evt.clientY;
+	      arr.push(new complex((x-250)/500,(250 - y)/500));
+	  }
+      }
+
+      window.onmousedown = onMouseClick;
+      window.onmousemove = onMouseMove;
+      
+      function initDrawing(info,x0,y0,scale){
+	  var t = 0;
+	  var pos;
+	  var points = [];
+	  var n = info.length;
+	  pos = drawFourierCircles(info,t,x0,y0,scale);
+	  points.push(pos)
+	  function draw(){
+	      t = (t+1)%n;
+	      clearScreen();
+	      pos = drawFourierCircles(info,t,x0,y0,scale);
+	      points.push(pos);
+	      drawLines(points,"#FF0000");	  
+	  }
+
+	  setInterval(draw,20);
+      }
+
+      function start(){
+	  var xk = dft(arr);
+	  var info = getRadiusPhase(xk);
+	  console.log(info);
+	  initDrawing(info,200,200,2);
+      }
+    </script>
+    <button onclick="start()">Start</button>
+  </body>
+</html>
