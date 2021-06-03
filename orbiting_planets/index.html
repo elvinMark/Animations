@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Planets</title>
+	<script type="text/javascript" src="planets.js"></script>
+</head>
+<body>
+	<canvas id="mycanvas" width="500" height="500" style="border:solid 2px;"></canvas>
+	<script type="text/javascript">
+		var ctx = document.getElementById("mycanvas").getContext("2d");
+		var s = new system(new vector(CANVAS_WIDTH/2,CANVAS_HEIGHT/2),new vector(0,0),SUN_COLOR,SUN_RADIUS);
+		var tmp = new planet(new vector(200,250),new vector(0,10),"#FF0000");
+		s.add(tmp);
+		var tmp = new planet(new vector(100,250),new vector(0,5),"#0000FF");
+		s.add(tmp);
+		//var tmp = new planet(new vector(50,250),new vector(0,5),"#00FF00");
+		//s.add(tmp);
+		var s1 = new system(new vector(50,250),new vector(0,5),"#00FF00",PLANET_RADIUS);
+		s1.add(new planet(new vector(-10,250),new vector(0,12),"#FFFFFF"));
+		s.add(s1);
+		var update = function(){
+			clearScreen(ctx);
+			drawBackground(ctx);
+			s.update();
+			s.draw(ctx);
+		};
+		//update();
+		window.setInterval(update,20);
+	</script>
+</body>
+</html>

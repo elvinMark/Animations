@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Clock</title>
+	<script type="text/javascript" src="clock.js"></script>
+</head>
+<body>
+	<canvas width="500" height="500" id="mycanvas" style="border:solid 2px;"></canvas>
+	<script type="text/javascript">
+		var ctx = document.getElementById("mycanvas").getContext("2d");
+		var c = new clock(200);
+		var update = function(){
+			clearScreen(ctx);
+			c.update();
+			c.draw(ctx);
+		};
+		window.setInterval(update,10);
+	</script>
+</body>
+</html>

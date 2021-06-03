@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Drawing a cardioid</title>
+</head>
+<body>
+	<canvas id="mycanvas" width="500" height="500"></canvas>
+	<input type="range" name="" id="myrange" onchange="update()" min="2" max="30">
+	<script type="text/javascript">
+		var ctx = document.getElementById("mycanvas").getContext("2d");
+		var slide = document.getElementById("myrange");
+		var N = 300;
+		var alpha = 2;
+		var theta = Math.PI;
+		var d = 2*Math.PI/N;
+		var x,y;
+		var x0 = 250;
+		var y0 = 250;
+		var R = 200;
+
+		ctx.beginPath();
+		ctx.arc(x0,y0,R,0,2*Math.PI);
+		ctx.stroke();
+
+		var points = [];
+
+		for(var i = 0;i<N;i++){
+			x = x0 + R*Math.cos(theta);
+			y = y0 + R*Math.sin(theta);
+			theta += d;	
+			points.push([x,y]);
+		}
+		function drawLines(){
+			var index;
+			for(var i = 0;i<N;i++){
+				index = (alpha*i)%N;
+				ctx.beginPath();
+				ctx.moveTo(points[i][0],points[i][1]);
+				ctx.lineTo(points[index][0],points[index][1]);
+				ctx.stroke();
+			}
+		}
+
+		function update(){
+			alpha = slide.value;
+			ctx.fillStyle = "#FFFFFF";
+			ctx.fillRect(0,0,500,500);
+			drawLines(); 
+		}
+		drawLines();
+	</script>
+</body>
+</html>

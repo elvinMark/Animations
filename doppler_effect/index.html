@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Doppler Effect</title>
+	<script type="text/javascript" src="doppler.js"></script>
+</head>
+<body>
+	<canvas width="500" height="500" id="mycanvas" style="border:solid 2px;"></canvas>
+	<script type="text/javascript">
+		var s = new source(new vector(0,400));
+		var ctx = document.getElementById("mycanvas").getContext("2d");
+		var w = [];
+		var update =function(){
+			cleanScreen(ctx);
+			for(var i in w){
+				w[i].update();
+				w[i].draw(ctx);
+			}
+			s.update();
+			s.draw(ctx);
+			w.push(s.ray());
+		};
+		window.setInterval(update,100);
+	</script>
+</body>
+</html>

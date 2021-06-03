@@ -1,0 +1,20 @@
+<html>
+  <head>
+    <title>Test</title>
+    <script src="gol.js"></script>
+  </head>
+  <body>
+    <canvas id="mycanvas" width="500" height="500"></canvas>
+    <script>
+      var canvas = document.getElementById("mycanvas");
+      var ctx = canvas.getContext("2d");
+      init_board(50,50);
+      random_init();
+      function run_gol(){
+      evolve();
+      draw_board(ctx,500,500);
+      }
+      setInterval(run_gol,100);
+    </script>
+  </body>
+</html>

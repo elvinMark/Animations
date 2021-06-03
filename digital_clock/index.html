@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Digital Clock</title>
+	<script type="text/javascript" src="digital.js"></script>
+</head>
+<body>
+	<canvas id="mycanvas" width="500" height="500" style="border:solid 1px;"></canvas>
+	<script type="text/javascript">
+		var ctx = document.getElementById("mycanvas").getContext("2d");
+		var dc = new digitalClock(200,200,10);
+		var update = function(){
+			clearScreen(ctx);
+			dc.update();
+			dc.draw(ctx);
+		}
+		window.setInterval(update,10);
+	</script>
+</body>
+</html>

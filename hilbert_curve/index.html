@@ -1,0 +1,17 @@
+<html>
+<head>
+	<title>Hilbert Curve</title>
+	<script src="hilbert.js"></script>
+</head>
+<body>
+	<canvas width="500" height="500" id="mycanvas"></canvas>
+	<script type="text/javascript">
+		var c = document.getElementById("mycanvas");
+		var ctx = c.getContext("2d");
+		var updateAndplot = function(){
+			animate_plotting(ctx,[10,10],500,6);
+		}
+		window.setInterval(updateAndplot,20);
+	</script>
+</body>
+</html>
