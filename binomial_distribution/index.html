@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Binomial Distribution</title>
+	<script type="text/javascript" src="binomial.js"></script>
+</head>
+<body>
+	<canvas id="mycanvas" width="500" height="800" style="border: solid 2px;"></canvas>
+	<script type="text/javascript">
+		var ctx = document.getElementById("mycanvas").getContext("2d");		
+
+		var balls = [];
+		var blocks = [];
+		var walls = [];
+
+		var count = [];
+
+
+		var num_balls = 700;
+		var num_lines = 10;
+		var spacing_lines = 40;
+		var num_blocks_per_line = 10;
+		var padding = 30;
+		var padding_top = 100;
+		var spacing_blocks = (WORLD_WIDTH-2*padding )/ (num_blocks_per_line - 1);
+		var num_walls = 20;
+		var spacing_walls = WORLD_WIDTH/(num_walls-1);
+		
+		for(var i = 0;i<num_walls-1;i++){
+			count.push(0);
+		}
+
+		for(var i = 0;i<num_balls;i++){
+			balls.push(new ball(new vector(MARGIN_X + WORLD_WIDTH/2 + 5*Math.random(), MARGIN_Y)));
+		}
+		for(var j = 0;j<num_lines;j++){
+			var d = j%2==0?0:spacing_blocks/2;
+			var k = j%2==0?0:-1;
+			for(var i = 0;i<num_blocks_per_line+k;i++){
+				blocks.push(new block(new vector(MARGIN_X + padding + d + i*spacing_blocks,padding_top + MARGIN_Y + j*spacing_lines)));
+			}
+		}
+		for(var i = 0;i<num_walls;i++){
+			walls.push(new wall(new vector(i*spacing_walls,WORLD_HEIGHT - WALL_HEIGHT)));
+		}
+
+		var count_balls = function(ctx){
+			for(var i=0;i<num_balls;i++){
+				count[Math.floor(balls[i].pos.x/spacing_walls)]++;
+			}
+			for(var i = 0;i<num_walls-1;i++){
+				ctx.beginPath();
+				ctx.fillStyle = "#FFFF22";
+				ctx.fillRect(i*spacing_walls,WORLD_HEIGHT,spacing_walls,-count[i]*5);
+				count[i] = 0;
+			}
+		}
+
+		var g = new vector(0,2);
+		var update = function(){
+			clearScreen(ctx);
+			for(var i in balls){
+				balls[i].applyAcc(g);
+				for(var j in blocks){
+					if(blocks[j].isColliding(balls[i])){
+						blocks[j].collide(balls[i]);
+						break;
+					}
+				}
+				for(var j in walls){
+					if(walls[j].isColliding(balls[i])){
+						walls[j].collide(balls[i]);
+						//break;
+					}
+				}
+				balls[i].update();
+				balls[i].draw(ctx);
+			}
+			for(var i in blocks){
+				blocks[i].draw(ctx);
+			}
+			for(var i in walls){
+				walls[i].draw(ctx);
+			}
+			count_balls(ctx);
+		};
+
+		window.setInterval(update,20);
+	</script>
+</body>
+</html>
