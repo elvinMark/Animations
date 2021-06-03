@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Genetic Algorithm</title>
+	<script type="text/javascript" src="genetic.js"></script>
+</head>
+<body onkeydown="keyDown(event)">
+	<canvas width="500" height="500" id="mycanvas" style="border: solid 2px;"></canvas>
+	<p id="gen"></p>
+	<script type="text/javascript">
+		var ctx = document.getElementById("mycanvas").getContext("2d");
+		var s = new ESimulation();
+		var counter = 0;
+		var generation = 0;
+		var t = document.getElementById("gen");
+		var update = function(){
+			clearScreen(ctx);
+			s.update();
+			s.draw(ctx);
+			if(counter > N_GENES){
+				counter = 0;
+				s.getNextGeneration();
+				generation++;
+				t.innerHTML = generation;
+			}
+			counter++;
+		};
+		var keyDown = function(e){
+			if(e.key == " ")
+				s.getNextGeneration();
+		}
+		window.setInterval(update,30);
+	</script>
+</body>
+</html>
