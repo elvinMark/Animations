@@ -1,59 +1,65 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>Box3D</title>
 	<script type="text/javascript" src="box.js"></script>
 </head>
+
 <body>
 	<script>
-		createCanvas(500,500);
-		var o = createBlock(new eVector3D(25,25,0),50,50,50);
-		var o1 = createBlock(new eVector3D(0,0,50),50,100,50);
-		var c = createSphere(new eVector3D(0,0,0),50,10);
+		createCanvas(500, 500);
+		var o = createBlock(new eVector3D(25, 25, 0), 50, 50, 50);
+		var o1 = createBlock(new eVector3D(0, 0, 50), 50, 100, 50);
+		var c = createSphere(new eVector3D(0, 0, 0), 50, 10);
 
-		add3DObject("block1",o);
-		add3DObject("block2",o1);
-		add3DObject("sphere",c);
+		add3DObject("block1", o);
+		add3DObject("block2", o1);
+		add3DObject("sphere", c);
 
 		var angle = 0.01;
-		function update(){
+		function update() {
 			background(rgb(200));
 			rotateXAxis(angle);
-			rotateYAxis(2*angle);
-			rotateZAxis(4*angle);
+			rotateYAxis(2 * angle);
+			rotateZAxis(4 * angle);
 			push();
-			translate(250,250);
+			translate(250, 250);
 			showObjects();
 			pop();
 		};
 
-		function updateBox(){
+		function updateBox() {
 			background(rgb(200));
 			push();
-			translate(250,250);
+			translate(250, 250);
 			c.view(tmp);
 			pop();
 		};
-		window.setInterval(update,20);
-		function changeAngle(){
-			var tx = PI*parseInt(document.getElementById("angleX").value)/100.0;
-			var ty = PI*parseInt(document.getElementById("angleY").value)/100.0;
-			var tz = PI*parseInt(document.getElementById("angleZ").value)/100.0;
+		window.setInterval(update, 20);
+		function changeAngle() {
+			var tx = PI * parseInt(document.getElementById("angleX").value) / 100.0;
+			var ty = PI * parseInt(document.getElementById("angleY").value) / 100.0;
+			var tz = PI * parseInt(document.getElementById("angleZ").value) / 100.0;
 			tmp = o.copy();
-			tmp.rotateXAxis(tx);
-			tmp.rotateYAxis(ty);
-			tmp.rotateZAxis(tz);
+			// tmp.rotateXAxis(tx);
+			// tmp.rotateYAxis(ty);
+			// tmp.rotateZAxis(tz);
+			rotateXAxis(tx);
+			rotateYAxis(ty);
+			rotateZAxis(tz);
 		}
 	</script>
 	<div>
 		<span>Angle X: </span>
-		<input type="range" name="" id="angleX" min="0" max ="100" onchange="changeAngle()"><br>
+		<input type="range" name="" id="angleX" min="0" max="100" onchange="changeAngle()"><br>
 		<span>Angle Y: </span>
-		<input type="range" name="" id="angleY" min="0" max ="100" onchange="changeAngle()"><br>
+		<input type="range" name="" id="angleY" min="0" max="100" onchange="changeAngle()"><br>
 		<span>Angle Z: </span>
-		<input type="range" name="" id="angleZ" min="0" max ="100" onchange="changeAngle()"><br>
+		<input type="range" name="" id="angleZ" min="0" max="100" onchange="changeAngle()"><br>
 	</div>
 	<script type="text/javascript">
 	</script>
 </body>
+
 </html>
