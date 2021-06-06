@@ -33,7 +33,12 @@ function drawCircle(xc,yc,r,color){
     ctx.restore();
 }
 
+function drawSpring(x1,y1,x2,y2,n){
+    drawLine(x1,y1,x2,y2);
+}
+
 // Math Tools
+
 function myvector(arr){
     this.data = arr;
 
@@ -87,7 +92,7 @@ function rungeKutta(funf,x0,t0,dt){
 
 let default_double_pendulum_dict = {
     "l1" : 5,
-    "l2" : 6,
+    "l2" : 5,
     "m1" : 1,
     "m2" : 1,
     "r1" : 1,
@@ -95,6 +100,44 @@ let default_double_pendulum_dict = {
     "g"  : 1,
     "scale" : 20
 };
+
+let default_parabollic_motion_dict = {
+    "g" : 40,
+    "r" : 1,
+    "scale" : 20
+};
+
+let default_spring_motion_dict = {
+    "mass" : 1,
+    "r" : 20,
+    
+    "springs":{
+	"1":{
+	    "k" : 1,
+	    "l" : 100,
+	    "x" : 250,
+	    "y" : 10
+	},
+	"2":{
+	    "k" : 1,
+	    "l" : 100,
+	    "x" : 10,
+	    "y" : 250
+	},
+	"3":{
+	    "k" : 1,
+	    "l" : 100,
+	    "x" : 250,
+	    "y" : 490
+	},
+	"4":{
+	    "k" : 1,
+	    "l" : 100,
+	    "x" : 490,
+	    "y" : 250
+	}
+    }
+}
 
 function doublePendulum(info,angle0,t0){
     let out = [];
@@ -107,11 +150,64 @@ function doublePendulum(info,angle0,t0){
     let m1 = info["m1"];
     let m2 = info["m2"];
     let g = info["g"];
-    
+
+    // Motion Equation got from Euler-Lagrange Equation
     out.push(a1);
     out.push(b1);
     out.push((-2*m2*Math.sin(a - b)*(l2*b1*b1 + l1*Math.cos(a - b)*a1*a1) - (2*m1 + m2)*g*Math.sin(a) + m2*g*Math.sin(2*b - a))/(l1*(2*m1 + m2) - m2*l1*Math.cos(2*a - 2*b)));
     out.push((2*Math.sin(a-b)*((m1 + m2)*l1*a1*a1 + l2*m2*Math.cos(a - b)*b1*b1 + (m1+m2)*g*Math.cos(a)))/(l2*(2*m1 + m2) - m2*l2*Math.cos(2*a - 2*b)));
+
+    return new myvector(out);
+}
+
+function parabollicMotion(info,u0,t0){
+    let out = [];
+    let x = u0.data[0];
+    let y = u0.data[1];
+    let x1 = u0.data[2];
+    let y1 = u0.data[3];
+    let g = info["g"];
+    
+    out.push(x1);
+    out.push(y1);
+    out.push(0);
+    out.push(g);
+
+    return new myvector(out);
+}
+
+function springMotion(info,u0,t0){
+    let out = [];
+    let x = u0.data[0];
+    let y = u0.data[1];
+    let x1 = u0.data[2];
+    let y1 = u0.data[3];
+    let tmpx;
+    let tmpy;
+    let tmpk;
+    let l;
+    let d;
+    
+    let fx = 0;
+    let fy = 0;
+
+    let mass = info["mass"];
+    let springs = info["springs"];
+    
+    for(let s in springs){
+	tmpk = springs[s]["k"];
+	tmpx = x - springs[s]["x"];
+	tmpy = y - springs[s]["y"];
+	l = springs[s]["l"];
+	d = Math.sqrt(tmpx*tmpx + tmpy*tmpy);
+	fx += tmpk * tmpx * (l - d)/d;
+	fy += tmpk * tmpy * (l - d)/d;
+    }
+
+    out.push(x1);
+    out.push(y1);
+    out.push(fx/mass);
+    out.push(fy/mass);
 
     return new myvector(out);
 }
@@ -139,6 +235,32 @@ function drawDoublePendulum(info,angle0,pos0){
     drawCircle(x2,y2,scale*r2,"rgb(0,255,100)");
 }
 
+function drawParabollicMotion(info,u0){
+    let r = info["r"];
+    let scale = info["scale"];
+    let x = u0.data[0];
+    let y = u0.data[1];
+
+    drawCircle(x,y,scale*r,"rgb(255,0,100)");
+}
+
+function drawSpringMotion(info,u0){
+    let x = u0.data[0];
+    let y = u0.data[1];
+    let r = info["r"];
+    let tmpx;
+    let tmpy;
+    
+    drawCircle(x,y,r,"rgb(100,100,200)");
+
+    let springs = info["springs"];
+    for(let s in springs){
+	tmpx = springs[s]["x"];
+	tmpy = springs[s]["y"];
+	drawSpring(tmpx,tmpy,x,y,10);
+    }
+}
+
 function startDoublePendulumAnimation(info,x0,dt,pos0){
     let funf = (x,t) => {
 	return doublePendulum(info,x,t);
@@ -157,8 +279,54 @@ function startDoublePendulumAnimation(info,x0,dt,pos0){
 	curr_t += dt;
     };
 
-    setInterval(pendulum_update,20);
-    
+    setInterval(pendulum_update,20);    
 }
 
-startDoublePendulumAnimation(default_double_pendulum_dict,new myvector([2,3,0,0]),0.1,new myvector([250,200]));
+function startParabollicMotion(info,x0,dt){
+    let funf = (x,t) => {
+	return parabollicMotion(info,x,t);
+    };
+
+    let curr_u = x0;
+    let curr_t = 0;
+
+    let level = x0.data[1];
+
+    let counter = 0;
+    let parabollic_update = () => {
+	if(curr_u.data[1] <= level){
+	    //clearCanvas();
+	    drawParabollicMotion(info,curr_u);
+	    curr_u = rungeKutta(funf,curr_u,curr_t,dt);
+	    curr_t += dt;
+	}
+    };
+
+    setInterval(parabollic_update,20);
+}
+
+function startSpringMotion(info,x0,dt){
+    let funf = (x,t) => {
+	return springMotion(info,x,t);
+    };
+
+    let curr_u = x0;
+    let curr_t = 0;
+
+    let counter = 0;
+    let spring_update = () => {
+	if(counter < 1000){
+	    clearCanvas();
+	    drawSpringMotion(info,curr_u);
+	    curr_u = rungeKutta(funf,curr_u,curr_t,dt);
+	    curr_t += dt;
+	    counter += 1;
+	}
+    };
+
+    setInterval(spring_update,20);
+}
+
+//startDoublePendulumAnimation(default_double_pendulum_dict,new myvector([1,0.5,0,0]),0.1,new myvector([250,200]));
+//startParabollicMotion(default_parabollic_motion_dict,new myvector([50,400,60,-150]),0.1);
+startSpringMotion(default_spring_motion_dict,new myvector([150,10,0,0]),0.1)
