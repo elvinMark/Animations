@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Sorting</title>
+	<script type="text/javascript" src="sorting.js"></script>
+</head>
+<body>
+	<script type="text/javascript">
+		createCanvas(500,500);
+		background(rgb(200));
+		createList(20);
+		shuffle();
+		printList();
+		var step = 0
+		graphData();
+		setMethod("bubble");
+		function update(){
+			if(!isOrdered()){
+				background(rgb(200));
+				sort();
+				graphData();
+			}
+		}
+		window.setInterval(update,50);
+	</script>
+</body>
+</html>
