@@ -1,0 +1,20 @@
+<html>
+  <head>
+    <title>Feynman's Lost Lecture</title>
+  </head>
+  <body>
+    <script src="../emmv.js"></script>
+    <script src="feynman.js"></script>
+    <script>
+      init();
+      setInterval(update,100);
+      
+      document.onmousedown = (event) => {
+	  x = event.offsetX;
+	  y = event.offsetY;
+	  rot_angle = 0;
+	  createLines(100);
+      }
+    </script>
+  </body>
+</html>
