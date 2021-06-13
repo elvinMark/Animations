@@ -6,9 +6,11 @@ let fill = false;
 let fillColor = "#000000";
 let lineColor = "#000000";
 let lineWidth = 1;
+let fontStyle = "20px serif";
 
 let BLACK = "rgb(0,0,0)";
 let WHITE = "rgb(255,255,255)";
+let GRAY = "rgb(128,128,128)";
 let RED = "rgb(255,0,0)";
 let GREEN = "rgb(0,255,0)";
 let BLUE = "rgb(0,0,255)";
@@ -34,6 +36,14 @@ function clearCanvas(){
     drawRect(0,0,canvas.width,canvas.height);
 }
 
+function getWidth(){
+    return canvas.width;
+}
+
+function getHeight(){
+    return canvas.height;
+}
+
 function noStroke(){
     stroke = false;
 }
@@ -52,6 +62,10 @@ function setFill(color=BLACK){
     fill = true;
 }
 
+
+function setFont(font = "20px serif"){
+    fontStyle = font;
+}
 
 function doDraw(){
     if(stroke){
@@ -98,6 +112,17 @@ function drawCircle(x,y,r){
 
     doDraw();
     
+    ctx.closePath();
+    ctx.restore();
+}
+
+function drawText(x,y,text){
+    ctx.save();
+    ctx.beginPath();
+
+    ctx.font = fontStyle;
+    ctx.fillText(text,x,y);
+
     ctx.closePath();
     ctx.restore();
 }
