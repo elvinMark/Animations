@@ -1,0 +1,51 @@
+<html>
+  <head>
+    <title>Windmill</title>
+  </head>
+  <body>
+    <script src="../emmv.js"></script>
+    <script src="windmill.js"></script>
+    <script>
+      init();
+      document.onmousedown= (event)=>{
+	  if(pivotFlag){
+	      let p = [event.offsetX,event.offsetY];
+
+	      for(let i in points){
+		  if(distance2d(p,points[i]) < r){
+		      pivot = points[i];
+		      console.log("found");
+ 		      pivotFlag = false;
+		      lineFlag = true;
+		      break;
+		  }
+	      }
+	  }
+
+	  else if(lineFlag){
+	      lineFlag = false;
+	      startRotating = true;
+	  }
+      };
+
+      document.onmousemove = (event) => {
+	  if(lineFlag){
+	      let v2 = [event.offsetX - pivot[0],event.offsetY - pivot[1]];
+	      
+	      let angle = angleBetweenVectors(line,v2);
+
+	      if(!isNaN(angle)){
+		  rotateLine(angle);
+	      }
+	      
+	      clearCanvas();
+	      drawPoints();
+	      drawWindmill();
+	  }
+      };
+
+      setInterval(update,100);
+    </script>
+  </body>
+
+</html>
